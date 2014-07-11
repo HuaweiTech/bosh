@@ -2,7 +2,6 @@ package net
 
 import (
 	"bytes"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -327,8 +326,8 @@ func (net ubuntuNetManager) detectNetworkInterfaces() ([]string, error) {
 	}
 
 	for _, filePath := range filePaths {
-		_, err := os.Stat(filepath.Join(filePath, "device"))
-		if err != nil {
+		exists := net.fs.FileExists(filepath.Join(filePath, "device"))
+		if !exists {
 			// no device, it's a internal net
 			continue
 		}
