@@ -1,6 +1,7 @@
 package net_test
 
 import (
+	"errors"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
@@ -325,6 +326,24 @@ iface lo inet loopback
 					networkConfig := fs.GetFileTestStat("/etc/network/interfaces")
 					Expect(networkConfig).ToNot(BeNil())
 					Expect(networkConfig.StringContents()).To(Equal(expectedUbuntuDhcpNetworkNonInterfaces))
+				})
+			})
+
+			Context("when we some error on glob /sys/class/net/ on the system", func() {
+				It("returns error from glob /sys/class/net/", func() {
+					fs.GlobErr = errors.New("fs-glob-error")
+					err := netManager.SetupDhcp(networks, nil)
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(ContainSubstring("fs-glob-error"))
+				})
+			})
+
+			Context("when we some error on writing to /etc/network/interfaces on the system", func() {
+				It("returns error from writing to /etc/network/interfaces", func() {
+					fs.WriteToFileError = errors.New("fs-write-file-error")
+					err := netManager.SetupDhcp(networks, nil)
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(ContainSubstring("fs-write-file-error"))
 				})
 			})
 		})
