@@ -34,6 +34,7 @@ module Bosh::Deployer::InfrastructureDefaults
           'default_key_name' => nil,
           'wait_resource_poll_interval' => 5,
           'default_security_groups' => [],
+          'connection_options' => {},
           'ssh_user' => 'vcap'
         },
         'registry' => {
